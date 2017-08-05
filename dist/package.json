@@ -1,0 +1,10 @@
+{
+ "name": "wutz-app",
+ "version": "1.0.0",
+ "description": "A Vue.js App made by Wutz",
+ "author": "John Perez",
+ "private": true,
+ "scripts": {
+   "postinstall": "npm install express"
+ }
+}
