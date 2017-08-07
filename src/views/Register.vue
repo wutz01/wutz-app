@@ -2,6 +2,7 @@
 v-container
 	v-layout(row)
 		v-flex(xs10, offset-xs1)
+			h3.blue--text Create Account
 			v-alert(error,:value="hasErrors") {{ message }}
 			v-alert(success,:value="isSuccess") {{ message }}
 

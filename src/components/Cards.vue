@@ -10,7 +10,7 @@ v-card.dark--text
 	v-card-actions.dark
 		v-spacer
 			v-btn(icon, @click.native="card.visible = !card.visible")
-				v-icon fa-chevron-down
+				v-icon {{ card.visible ? 'fa-chevron-up' : 'fa-chevron-down' }}
 </template>
 <script>
 	export default {

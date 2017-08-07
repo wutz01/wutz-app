@@ -1,15 +1,10 @@
 <template lang="pug">
-	<!-- v-container(fluid, grid-list-md).grey.lighten-4 -->
-	v-layout(row,wrap,lighten-4)
-		v-flex(
-			xs6,
-			v-for="card in cards",
-			:key="card.title"
-		)
-			cards(:card="card")
-				span(slot="title") {{ card.title }}
-				br
-				p(v-show="card.visible") {{ card.description }}
+	v-container
+		v-layout(row,v-for="card in cards", :key="card.title").overview-list
+			v-flex(xs10, offset-xs1)
+				cards(:card="card")
+					p(slot="title") {{ card.title }}
+					p(v-show="card.visible") {{ card.description }}
 </template>
 
 <script>
@@ -23,9 +18,15 @@
 			return {
 				cards: [
 					{ description: 'Hey, I\'m John. I just started learning vue. I have been always a back-end developer, so this kind of stuffs is new to me. This gives me a chance to showcase my attitude towards working and learning. I am eager to learn and to build wonderful Apps.', title: 'Overview', visible: true },
-					{ description: 'Built using VueJs, Vuetify, and the database used is FireBase.', title: 'Chat App', visible: false },
+					{ description: 'Built using VueJs, Vuetify, and the database used is FireBase. A user can join any of our channels and view each messages from each channels that they are subscribed to.', title: 'Chat App', visible: false },
 				]
 			}
 		}
 	}
 </script>
+
+<style scoped>
+	.overview-list{
+		padding-bottom: 30px;
+	}
+</style>
