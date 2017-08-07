@@ -54,8 +54,8 @@
 					.then(function (data) {
 				  		// this.$store.state.user = auth.currentUser;
 				  		console.log('Welcome!')
-				  		this.email = ''
-				  		this.password = ''
+				  		vm.email = ''
+				  		vm.password = ''
 				  		vm.toggleLogin()
 					}).catch(function(error) {
 				  		vm.message = error.message;
