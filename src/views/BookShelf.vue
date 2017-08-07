@@ -1,11 +1,11 @@
 <template lang="pug">
-    v-card.grey.lighten-4.elevation-0
+    v-card.elevation-0
       v-card-text
-        h4 Library
+        h4.blue--text Library
         v-subheader VueJs & Firebase
         
         v-layout(row, justify-center)
-          v-btn(primary, dark, @click.native="dialog = !dialog") New Book
+          v-btn(primary, @click.native="dialog = !dialog") New Book
           v-dialog(v-model="dialog", persistent, width="600px")
             v-card
               v-card-title
@@ -17,24 +17,26 @@
               v-card-actions
                 v-spacer
                 v-btn.blue--text.darken-1(flat, @click.native="dialog = false") Close
-                v-btn.blue--text.darken-1(flat, @click.native="addBook") Save
+                v-btn.darken-1(primary, @click.native="addBook") Save
         
-        v-container(fluid, grid-list-md).grey.lighten-4
+        v-container(fluid, grid-list-md)
           v-layout(row,wrap)
             v-flex(
               v-bind="{ [`xs${books.flex}`]: true }",
               v-for="book in books",
               :key="book.title"
             )
-              v-card.blue-grey.darken-2.white--text
+              v-card.dark--text
                 v-card-title(primary-title)
                   .headline(v-text="book.title")
+                  v-divider
                   div(v-text="book.description")
                   small(v-text="book.author")
-                v-card-actions.white
+                v-divider
+                v-card-actions.dark
                   v-spacer
-                    v-btn(icon, @click="removeBook(book)")
-                      v-icon delete
+                    v-btn(icon, @click="removeBook(book)").red--text
+                      v-icon fa-trash
 </template>
 <script>
 import db from '../db'

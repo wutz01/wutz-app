@@ -6,12 +6,14 @@ Vue.use(Router)
 import Overview from '@/views/Overview';
 import ChatRoom from '@/views/ChatRoom';
 import BookShelf from '@/views/BookShelf';
+import Register from '@/views/Register';
 
 export default new Router({
   routes: [
     { path: '/', component: Overview },
 	{ path: '/chat', component: ChatRoom },
-	{ path: '/library', component: BookShelf }
+	{ path: '/library', component: BookShelf },
+	{ path: '/register', component: Register }
   ],
   mode: 'history',
   linkActiveClass: 'is-active',

@@ -6,6 +6,7 @@ import router from './router'
 import Vuetify from 'vuetify'
 import VueFire from 'vuefire'
 import axios from 'axios'
+// import { store } from './store/store'
 
 Vue.use(VueFire)
 Vue.use(Vuetify)

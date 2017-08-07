@@ -1,17 +1,20 @@
 <template lang="pug">
-v-card.blue-grey.darken-2.white--text
+v-card.dark--text
 	v-card-title(primary-title)
 		.headline
 			slot(name="title")
-		div
+		br
+		div.content
 			slot
-	v-card-actions.white
+	v-divider
+	v-card-actions.dark
 		v-spacer
-			v-btn(icon)
-				v-icon more_vert
+			v-btn(icon, @click.native="card.visible = !card.visible")
+				v-icon fa-chevron-down
 </template>
 <script>
 	export default {
-		name: 'cards'
+		name: 'cards',
+		props: ['card'],
 	}
 </script>
