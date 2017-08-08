@@ -7,13 +7,15 @@ import Overview from '@/views/Overview';
 import ChatRoom from '@/views/ChatRoom';
 import BookShelf from '@/views/BookShelf';
 import Register from '@/views/Register';
+import Signin from '@/views/Signin';
 
 export default new Router({
   routes: [
     { path: '/', component: Overview },
-	{ path: '/chat', component: ChatRoom },
-	{ path: '/library', component: BookShelf },
-	{ path: '/register', component: Register }
+  	{ path: '/chat', component: ChatRoom },
+  	{ path: '/library', component: BookShelf },
+  	{ path: '/register', component: Register },
+  	{ path: '/login', component: Signin }
   ],
   mode: 'history',
   linkActiveClass: 'is-active',

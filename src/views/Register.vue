@@ -1,21 +1,34 @@
 <template lang="pug">
-v-container
 	v-layout(row)
-		v-flex(xs10, offset-xs1)
+		v-flex(xs6).blue.frm-container.img-container
+			div.txtHolder
+				h2.white--text
+					strong Wutz
+				h2.white--text(style="line-height: 10px")
+					strong Application
+				br
+				p.white--text A place for every conversation.
+				p.white--text Have an account already?
+				v-btn.lighten-1(router, to="/login", primary, flat).white--text.text-xs-right Click here to sign in
+
+		v-flex(xs6).frm-container
 			h3.blue--text Create Account
+			div.mb-2
+				i Don't have an account yet? Create your account now.
 			v-alert(error,:value="hasErrors") {{ message }}
 			v-alert(success,:value="isSuccess") {{ message }}
 
+			v-text-field(name="displayName",label="Name",v-model="newUser.displayName")
 			v-text-field(name="email",label="Email Address",v-model="newUser.email")
-			v-text-field(name="password", type="password",label="Password",v-model="newUser.password")
-			<!-- v-btn.blue--text.darken-1(flat) Have an account already? click here to sign in. -->
+			v-text-field(name="password", type="password",label="Password",v-model="newUser.password",@keyup.enter="Register")
 			v-btn(primary,dark,@click.native="Register") Create Account
-        
+
 </template>
 
 <script>
 	import Firebase from 'firebase'
-	// import { store }
+	import db from '../db'
+	import router from '../router'
 	let auth = Firebase.auth()
 	export default {
 		name: 'register',
@@ -23,7 +36,8 @@ v-container
 			return {
 				newUser: {
 					email: '',
-					password: ''
+					password: '',
+					displayName: ''
 				},
 				message: '',
 				hasErrors: false,
@@ -36,18 +50,25 @@ v-container
       			vm.message = '';
 			    vm.hasErrors = false;
 
-				if (vm.email === '' || vm.password === '') {
-					vm.message = "Please provide the email and password"
+				if (vm.newUser.email === '' || vm.newUser.password === '' || vm.newUser.displayName === '') {
+						vm.message = "Please provide the name, email, and password"
 			  		vm.hasErrors = true;
-					return;
+						return;
 				}
 			      // Sign-in the user with the email and password
 				auth.createUserWithEmailAndPassword(vm.newUser.email, vm.newUser.password)
 					.then(function (data) {
 				  		// this.$store.state.user = auth.currentUser;
-				  		vm.message = "Successfully registered."
-				  		vm.isSuccess = true;
-				  		this.router.push('/')
+							// var user = auth.currentUser;
+							var url = "https://randomuser.me/api/portraits/men/" + Math.ceil(Math.random()*100) + ".jpg"
+							data.updateProfile({
+							  displayName: vm.newUser.displayName,
+							  photoURL: url
+							});
+							db.ref('users').push({email: vm.newUser.email, online: true, location: '', user: vm.newUser.displayName, avatar: url});
+							vm.message = "Successfully registered."
+							vm.isSuccess = true;
+							router.push('/')
 					}).catch(function(error) {
 				  		vm.message = error.message;
 				  		vm.hasErrors = true;
@@ -57,3 +78,13 @@ v-container
 		}
 	}
 </script>
+
+<style scoped>
+	.frm-container{
+		padding: 20% 10%
+	}
+	.img-container {
+		background: url('../assets/macbook2.jpg');
+		background-size: cover;
+	}
+</style>

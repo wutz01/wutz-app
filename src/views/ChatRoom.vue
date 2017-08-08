@@ -30,7 +30,7 @@
                           v-list-tile-title(v-html="item.user")
                           v-list-tile-sub-title(v-html="item.message")
                         v-list-tile-action
-                          v-btn(icon, ripple,@click="removeChat(item)",v-if="item.user === user.email")
+                          v-btn(icon, ripple,@click="removeChat(item)",v-if="item.email === user.email")
                             v-icon.red--text.text--lighten-2(style="font-size: 20px") fa-trash
                       v-divider
             v-flex(xs6)
@@ -48,14 +48,14 @@
         v-container(fluid,height="500px")
           v-layout(row)
             v-flex(xs6)
-              v-text-field(name="username",label="Email",v-model="newChat.user", readonly)
+              v-text-field(name="username",label="Name",v-model="newChat.user", readonly)
           v-layout(row)
             v-flex(xs6)
-              v-text-field(name="input-1",label="Your message here..", textarea,v-model="newChat.message")
+              v-text-field(name="input-1",label="Your message here..", textarea,v-model="newChat.message",@keyup.enter="addChat")
           v-layout(row)
-            v-flex(xs6)  
+            v-flex(xs6)
               v-btn(primary,dark,@click="addChat")
-                span Send 
+                span Send
                   v-icon(style="font-size: 20px, line-height: 10px") send
 </template>
 
@@ -63,19 +63,21 @@
 import db from '../db'
 import Firebase from 'firebase'
 let auth = Firebase.auth()
-// let chatLogs = db.ref().child('chatlogs').orderByChild('channel').equalTo('development')
+let myRef = '', myKey = '', myPosition = ''
+let usersRef = db.ref('users')
 export default {
 	name: 'chat-room',
-	// firebase: {
- //  		chatlogs: chatLogs
-	// },
+	firebase: {
+  		users: usersRef
+	},
 	data () {
 	  return {
       user: null,
 	    newChat: {
 	      user: '',
+        email: '',
 	      message: '',
-	      avatar: "https://randomuser.me/api/portraits/men/" + Math.ceil(Math.random()*100) + ".jpg",
+	      avatar: '',
         channel: ''
 	    },
       e1: 'general',
@@ -86,7 +88,7 @@ export default {
 	methods: {
 	  addChat: function () {
 	  	if(this.newChat.message.trim() != '' && this.newChat.user.trim() != ''){
-	  		db.ref('chatlogs').push(this.newChat);
+	  		db.ref('chatlogs/'+this.e1).push(this.newChat);
 	    	this.newChat.message = '';
 	  	} else {
 	  		alert('Please Enter Message and your Name!');
@@ -95,24 +97,27 @@ export default {
     removeChat: function (chat) {
       let x = confirm("Do you wish to delete this message?")
       if(x == true){
-        db.ref('chatlogs').child(chat['.key']).remove()
+        db.ref('chatlogs/'+this.e1).child(chat['.key']).remove()
       }
     },
     loadChannel: function(){
-      this.$bindAsArray('channelChat', db.ref().child('chatlogs').orderByChild('channel').equalTo(this.e1));
-      // db.ref().child('channelSubscribe').push({user: this.newChat.user, channel: this.e1, avatar: this.newChat.avatar})
-      // this.$bindAsArray('channelSubscribe', db.ref().child('channelSubscribe').orderByChild('channel').equalTo(this.e1));
-      
+      for(var i = 0; i < this.users.length; i++) {
+        if(this.newChat.email == this.users[i].email){
+          myKey = this.users[i][".key"]
+          if(myRef == ''){
+            console.log(myKey)
+            myRef = db.ref('users/'+myKey)
+          } else {
+            myRef.update({location: this.e1})
+          }
+        }
+      }
+      this.$bindAsArray('channelChat', db.ref('chatlogs/'+this.e1));
+      this.$bindAsArray('channelSubscribe', db.ref('users').orderByChild('location').equalTo(this.e1));
+
     }
 	},
   watch: {
-    chatLogs: function(){
-      var div = document.getElementById("chatlogs");
-      div.scrollTop = div.scrollHeight - div.clientHeight;
-    },
-    user: function(){
-      // console.log(this.user.email)
-    },
     e1: function(){
       this.newChat.channel = this.e1
       this.loadChannel()
@@ -127,12 +132,14 @@ export default {
     auth.onAuthStateChanged(firebaseUser => {
       if (firebaseUser) {
           this.user = firebaseUser
-          this.newChat.user = this.user.email
+          this.newChat.email = this.user.email
+          this.newChat.user = this.user.displayName
+          this.newChat.avatar = this.user.photoURL
           this.newChat.channel = this.e1
+          this.loadChannel()
       }
     })
 
-    this.loadChannel()
   }
 }
 </script>
