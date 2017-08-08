@@ -2,6 +2,10 @@
 
 > A Vue.js project
 
+> TO-DO
+> ADD FILE UPLOAD
+> MARKED USERS ONLINE AND OFFLINE
+
 ## Build Setup
 
 ``` bash
