@@ -1,62 +1,65 @@
 <template lang="pug">
-  div
-    v-card(height="50px")
-      v-bottom-nav(absolute,value="true").transparent
-        v-btn(flat,light,@click.native="e1 = 'general'", :value="e1 === 'general'").blue--text
-          span General
-          v-icon fa-briefcase
-        v-btn(flat,light,@click.native="e1 = 'development'", :value="e1 === 'development'").blue--text
-          span Development
-          v-icon fa-flash
-        v-btn(flat,light,@click.native="e1 = 'designs'", :value="e1 === 'designs'").blue--text
-          span Designs
-          v-icon ondemand_video
-    v-card.elevation-0
-      v-card-text(xs6)
-        h4.blue--text Chat Room
-        v-subheader You are now chatting in {{ capitalizeFirstLetter }}'s Channel
-        v-container
-          v-layout(row)
-            v-flex(xs6)
-              v-list(three-line)
-                  v-subheader Today
-                  v-divider
-                  div.our-container#chatlogs
-                    template(v-for="item in channelChat")
-                      v-list-tile(avatar, v-bind:key="item.user")
-                        v-list-tile-avatar
-                          img(v-bind:src="item.avatar")
-                        v-list-tile-content
-                          v-list-tile-title(v-html="item.user")
-                          v-list-tile-sub-title(v-html="item.message")
-                        v-list-tile-action
-                          v-btn(icon, ripple,@click="removeChat(item)",v-if="item.email === user.email")
-                            v-icon.red--text.text--lighten-2(style="font-size: 20px") fa-trash
-                      v-divider
-            v-flex(xs6)
-              v-list(three-line)
-                  v-subheader Subscribed in channel: {{ capitalizeFirstLetter }}
-                  v-divider
-                  div.our-container#chatlogs
-                    template(v-for="item in channelSubscribe")
-                      v-list-tile(avatar, v-bind:key="item.user")
-                        v-list-tile-avatar
-                          img(v-bind:src="item.avatar")
-                        v-list-tile-content
-                          v-list-tile-title(v-html="item.user")
-                      v-divider
-        v-container(fluid,height="500px")
-          v-layout(row)
-            v-flex(xs6)
-              v-text-field(name="username",label="Name",v-model="newChat.user", readonly)
-          v-layout(row)
-            v-flex(xs6)
-              v-text-field(name="input-1",label="Your message here..", textarea,v-model="newChat.message",@keyup.enter="addChat")
-          v-layout(row)
-            v-flex(xs6)
-              v-btn(primary,dark,@click="addChat")
-                span Send
-                  v-icon(style="font-size: 20px, line-height: 10px") send
+  v-card.elevation-0
+    v-card-text(xs6)
+      h4.blue--text Chat Room
+      v-tabs(dark, fixed, icons, centered)
+        v-tabs-bar(slot="activators").blue
+          v-tabs-slider.yellow
+          v-tabs-item(href="#tab-1",@click.native="e1 = 'general'")
+            v-icon fa-briefcase
+            p General
+          v-tabs-item(href="#tab-2",@click.native="e1 = 'development'")
+            v-icon fa-flash
+            p Development
+          v-tabs-item(href="#tab-3",@click.native="e1 = 'designs'")
+            v-icon ondemand_video
+            p Designs
+        v-tabs-content(v-for="i in 3", :key="i", :id="'tab-'+ i")
+          v-card(flat)
+            v-card-text
+              v-subheader You are now chatting in {{ capitalizeFirstLetter }}'s Channel
+              v-container
+                v-layout(row)
+                  v-flex(xs6)
+                    v-list(three-line)
+                        v-subheader Today
+                        v-divider
+                        div.our-container#chatlogs
+                          template(v-for="item in channelChat")
+                            v-list-tile(avatar, v-bind:key="item.user")
+                              v-list-tile-avatar
+                                img(v-bind:src="item.avatar")
+                              v-list-tile-content
+                                v-list-tile-title(v-html="item.user")
+                                v-list-tile-sub-title(v-html="item.message")
+                              v-list-tile-action
+                                v-btn(icon, ripple,@click="removeChat(item)",v-if="item.email === user.email")
+                                  v-icon.red--text.text--lighten-2(style="font-size: 20px") fa-trash
+                            v-divider
+                  v-flex(xs6)
+                    v-list(three-line)
+                        v-subheader Subscribed in channel: {{ capitalizeFirstLetter }}
+                        v-divider
+                        div.our-container#chatlogs
+                          template(v-for="item in channelSubscribe")
+                            v-list-tile(avatar, v-bind:key="item.user")
+                              v-list-tile-avatar
+                                img(v-bind:src="item.avatar")
+                              v-list-tile-content
+                                v-list-tile-title(v-html="item.user")
+                            v-divider
+              v-container(fluid,height="500px")
+                v-layout(row)
+                  v-flex(xs6)
+                    v-text-field(name="username",label="Name",v-model="newChat.user", readonly)
+                v-layout(row)
+                  v-flex(xs6)
+                    v-text-field(name="input-1",label="Your message here..", textarea,v-model="newChat.message",@keyup.enter="addChat")
+                v-layout(row)
+                  v-flex(xs6)
+                    v-btn(primary,dark,@click="addChat")
+                      span Send
+                        v-icon(style="font-size: 20px, line-height: 10px") send
 </template>
 
 <script>
@@ -101,20 +104,23 @@ export default {
       }
     },
     loadChannel: function(){
+      this.getUserKey()
+      this.$bindAsArray('channelChat', db.ref('chatlogs/'+this.e1));
+      this.$bindAsArray('channelSubscribe', db.ref('users').orderByChild('location').equalTo(this.e1));
+    },
+    getUserKey: function(){
       for(var i = 0; i < this.users.length; i++) {
         if(this.newChat.email == this.users[i].email){
           myKey = this.users[i][".key"]
           if(myRef == ''){
             console.log(myKey)
             myRef = db.ref('users/'+myKey)
+            myRef.update({location: this.e1})
           } else {
             myRef.update({location: this.e1})
           }
         }
       }
-      this.$bindAsArray('channelChat', db.ref('chatlogs/'+this.e1));
-      this.$bindAsArray('channelSubscribe', db.ref('users').orderByChild('location').equalTo(this.e1));
-
     }
 	},
   watch: {
@@ -138,6 +144,13 @@ export default {
           this.newChat.channel = this.e1
           this.loadChannel()
       }
+    })
+
+    myRef.onDisconnect().update({online: false, location: ''});
+  },
+  mounted: function() {
+    this.$nextTick(function () {
+      this.getUserKey()
     })
 
   }
