@@ -28,9 +28,9 @@
             v-icon fa-sign-out
           v-list-tile-content
             v-list-tile-title Log Out
-    v-toolbar(fixed, light)
+    v-toolbar(fixed, light).blue.white--text
       v-toolbar-side-icon(@click.native.stop="drawer = !drawer",v-if="!logout")
-      v-toolbar-title Wutz App
+      v-toolbar-title Nexus
       v-spacer
       v-toolbar-items.hidden-sm-and-down
         v-btn(flat,@click="redirectUrl('login')",v-if="logout") Login

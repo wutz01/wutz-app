@@ -3,11 +3,8 @@
 		v-flex(xs6).blue.frm-container.img-container
 			div.txtHolder
 				h2.white--text
-					strong Wutz
-				h2.white--text(style="line-height: 10px")
-					strong Application
-				br
-				p.white--text A place for every conversation.
+					strong Nexus
+				p.white--text A nexus of ideas and conversation.
 				p.white--text Have an account already?
 				v-btn.lighten-1(router, to="/login", primary, flat).white--text.text-xs-right Click here to sign in
 

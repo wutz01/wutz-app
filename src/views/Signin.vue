@@ -3,18 +3,15 @@
     v-flex(xs6).blue.frm-container.img-container
       div.txtHolder
         h2.white--text
-          strong Wutz
-        h2.white--text(style="line-height: 10px")
-          strong Application
-        br
-        p.white--text A place for every conversation.
+          strong Nexus
+        p.white--text A nexus of ideas and conversation.
         p.white--text Join us now...
         v-btn.white--text.lighten-1(flat, router, to="/register") click here to create your account
 
     v-flex(xs6).frm-container
       h3.blue--text Sign in
       div.mb-2
-        i Let's start chatting.
+        i Let's start sharing ideas!
       v-alert(error,:value="hasErrors") {{ message }}
       v-alert(success,:value="isSuccess") {{ message }}
 
