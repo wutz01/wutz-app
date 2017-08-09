@@ -20,6 +20,7 @@ Nexus is a chat app that has channels that you can join. This apps helps everyon
 Nexus uses a number of open source projects to work properly:
 
 * [VueJS](https://vuejs.org/) - Awesome Javascript library!
+* [Vuetifyjs](http://vuetifyjs.com/) - Vue UI framework!
 * [Materialize](http://materializecss.com/) - Another AWESOME UI framework!
 * [Font Aweosome](http://fontawesome.io/) - Cool and plenty of Icons to choose from.
 * [Atom](https://atom.io/) - My editor used in creating this app.
