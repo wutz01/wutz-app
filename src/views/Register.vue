@@ -21,7 +21,7 @@
 			v-text-field(name="displayName",label="Name",v-model="newUser.displayName")
 			v-text-field(name="email",label="Email Address",v-model="newUser.email")
 			v-text-field(name="password", type="password",label="Password",v-model="newUser.password",@keyup.enter="Register")
-			v-btn(primary,dark,@click.native="Register") Create Account
+			v-btn(primary,dark,@click.native="Register",:loading="loading", :disabled="loading",:class="loading ? 'blue--text' : ''") Create Account
 
 </template>
 
@@ -41,7 +41,9 @@
 				},
 				message: '',
 				hasErrors: false,
-				isSuccess: false
+				isSuccess: false,
+				loading: false,
+				loader: null
 			}
 		},
 		methods: {
@@ -55,6 +57,9 @@
 			  		vm.hasErrors = true;
 						return;
 				}
+
+				vm.loading = true;
+				vm.loader = 'loading3';
 			      // Sign-in the user with the email and password
 				auth.createUserWithEmailAndPassword(vm.newUser.email, vm.newUser.password)
 					.then(function (data) {
@@ -68,10 +73,14 @@
 							db.ref('users').push({email: vm.newUser.email, online: true, location: '', user: vm.newUser.displayName, avatar: url});
 							vm.message = "Successfully registered."
 							vm.isSuccess = true;
+							vm.loader = null;
+							vm.loading = false;
 							router.push('/')
 					}).catch(function(error) {
 				  		vm.message = error.message;
 				  		vm.hasErrors = true;
+							vm.loader = null;
+							vm.loading = false;
 					});
 
 			}

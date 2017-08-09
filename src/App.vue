@@ -55,7 +55,7 @@ export default {
         { title: 'Overview', icon: 'fa-laptop', url: "/", exact: true },
         { title: 'Chat', icon: 'fa-weixin', url: "/chat", exact: false },
         { title: 'Library', icon: 'fa-book', url: "/library", exact: false },
-        // { title: 'Log Out', icon: 'fa-sign-out', url: "/logout", exact: false },
+        { title: 'Gallery', icon: 'fa-image', url: "/gallery", exact: false },
       ],
       mini: false,
       right: null,

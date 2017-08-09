@@ -21,7 +21,7 @@
       v-text-field(name="email",label="Email Address",v-model="User.email")
       v-text-field(name="password", type="password",label="Password",v-model="User.password",@keyup.enter="Login")
 
-      v-btn(primary,dark,@click.prevent="Login") Sign in
+      v-btn(primary,dark,@click.prevent="Login",:loading="loading", :disabled="loading", :class="loading ? 'blue--text' : ''") Sign in
 
 </template>
 
@@ -30,7 +30,7 @@
   import router from '../router'
 	let auth = Firebase.auth()
 	export default {
-		name: 'register',
+		name: 'login',
 		data() {
 			return {
 				User: {
@@ -39,7 +39,9 @@
 				},
 				message: '',
 				hasErrors: false,
-				isSuccess: false
+				isSuccess: false,
+        loader: null,
+        loading: false
 			}
 		},
 		methods: {
@@ -53,15 +55,22 @@
 			  		vm.hasErrors = true;
 					return;
 				}
+
+        vm.loader = 'loading'
+        vm.loading = true
 			      // Sign-in the user with the email and password
 				auth.signInWithEmailAndPassword(vm.User.email, vm.User.password)
 					.then(function (data) {
 				  		vm.message = "Successfully Login."
 				  		vm.isSuccess = true;
+              vm.loader = null;
+							vm.loading = false;
 				  		router.push('/');
 					}).catch(function(error) {
 				  		vm.message = error.message;
 				  		vm.hasErrors = true;
+              vm.loader = null;
+							vm.loading = false;
 					});
 
 			}
