@@ -40,14 +40,16 @@
                     v-list(three-line)
                         v-subheader Subscribed in channel: {{ capitalizeFirstLetter }}
                         v-divider
-                        div.our-container#chatlogs
+                        v-icon(v-if="loading").fa-spin.pa-3 fa-spinner
+                        div.our-container#chatlogs(v-else="!loading")
                           template(v-for="item in channelSubscribe")
-                            v-list-tile(avatar, v-bind:key="item.user")
-                              v-list-tile-avatar
-                                img(v-bind:src="item.avatar")
-                              v-list-tile-content
-                                v-list-tile-title(v-html="item.user")
-                            v-divider
+                            template(v-if="item.online")
+                              v-list-tile(avatar, v-bind:key="item.user")
+                                v-list-tile-avatar
+                                  img(v-bind:src="item.avatar")
+                                v-list-tile-content
+                                  v-list-tile-title(v-html="item.user")
+                              v-divider
               v-container(fluid,height="500px")
                 v-layout(row)
                   v-flex(xs6)
@@ -86,6 +88,8 @@ export default {
       e1: 'general',
       channelChat: null,
       channelSubscribe: null,
+      loading: true,
+      users: null
 	  }
 	},
 	methods: {
@@ -104,23 +108,16 @@ export default {
       }
     },
     loadChannel: function(){
-      this.getUserKey()
-      this.$bindAsArray('channelChat', db.ref('chatlogs/'+this.e1));
-      this.$bindAsArray('channelSubscribe', db.ref('users').orderByChild('location').equalTo(this.e1));
+      var self = this;
+      this.$bindAsArray('channelChat', db.ref('chatlogs/'+self.e1));
+
+      if(myRef != '' || myRef != null){
+        myRef = db.ref('users/'+myKey)
+        myRef.update({location: self.e1, online: true})
+      }
+      this.$bindAsArray('channelSubscribe', db.ref('users').orderByChild('location').equalTo(self.e1));
     },
     getUserKey: function(){
-      for(var i = 0; i < this.users.length; i++) {
-        if(this.newChat.email == this.users[i].email){
-          myKey = this.users[i][".key"]
-          if(myRef == ''){
-            console.log(myKey)
-            myRef = db.ref('users/'+myKey)
-            myRef.update({location: this.e1})
-          } else {
-            myRef.update({location: this.e1})
-          }
-        }
-      }
     }
 	},
   watch: {
@@ -143,16 +140,47 @@ export default {
           this.newChat.avatar = this.user.photoURL
           this.newChat.channel = this.e1
           this.loadChannel()
+      } else {
+        myRef = db.ref('users/'+myKey)
+        myRef.onDisconnect().update({online: false, location: ''});
       }
     })
 
-    myRef.onDisconnect().update({online: false, location: ''});
-  },
-  mounted: function() {
-    this.$nextTick(function () {
-      this.getUserKey()
+    var self = this;
+    var ref = db.ref('users')
+    ref.on("value", function(snap){
+      if(snap.val()){
+        for(var i = 0; i < self.users.length; i++) {
+          if(self.newChat.email == self.users[i].email){
+            myKey = self.users[i][".key"]
+            if(myRef == ''){
+              myRef = db.ref('users/'+myKey)
+              myRef.update({location: self.e1, online: true})
+            } else {
+              myRef.update({location: self.e1, online: true})
+            }
+          }
+        }
+      } else {
+        console.log("not loading")
+      }
     })
 
+
+  },
+  mounted: function() {
+    var self = this;
+    db.ref('users').orderByChild('location').equalTo(this.e1).on("value", function(snap){
+      if(snap.val()){
+        self.loading = false
+        self.channelSubscribe = snap.val()
+      }
+    });
+
+  },
+  beforeDestroy: function() {
+    myRef = db.ref('users/'+myKey)
+    myRef.onDisconnect().update({online: false, location: ''});
   }
 }
 </script>
