@@ -55,11 +55,12 @@
 
     methods: {
       getFormData(files){
-          const data = new FormData();
-          [...files].forEach(file => {
-              data.append('data', file, file.name); // currently only one file at a time
-          });
-          return data;
+          var data = new FormData()
+          for (let file of files) {
+            data.append('file', file, file.name)
+          }
+
+          return files[0];
       },
       onFocus(){
           if (!this.disabled) {
@@ -69,7 +70,9 @@
       onFileChange($event){
           const files = $event.target.files || $event.dataTransfer.files;
           const form = this.getFormData(files);
+          const imageType = /image.*/;
           if (files) {
+              if (!files[0].type.match(imageType)) return;
               if (files.length > 0) {
                   this.filename = [...files].map(file => file.name).join(', ');
               } else {
@@ -79,7 +82,6 @@
               this.filename = $event.target.value.split('\\').pop();
           }
 
-          console.log(form);
           this.$emit('input', this.filename);
           this.$emit('formData', form);
       }

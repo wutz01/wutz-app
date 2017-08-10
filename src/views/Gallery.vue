@@ -1,8 +1,8 @@
 <template lang="pug">
     v-card.elevation-0
       v-card-text
-        h4.blue--text Library
-        v-subheader VueJs & Firebase
+        h4.blue--text Gallery
+        v-subheader Share your images!
 
         v-layout(row, justify-center)
           v-btn(primary, @click.native="dialog = !dialog") New Image
@@ -13,41 +13,41 @@
               v-card-text
                 v-text-field(label="Title", required, v-model="newImage.title")
                 v-text-field(label="Description", required, v-model="newImage.description")
-                v-text-field(label="Author", required, v-model="newImage.author")
-                file-upload(:input="setSrc")
+                file-upload(@input="setFilename",@formData="acceptForm")
               v-card-actions
                 v-spacer
                 v-btn.blue--text.darken-1(flat, @click.native="dialog = false") Close
-                v-btn.darken-1(primary, @click.native="addImage") Save
+                v-btn.darken-1(primary, @click.native="addImage",:loading="loading", :disabled="loading",:class="loading ? 'blue--text' : ''") Save
 
         v-container(fluid, grid-list-md)
           v-layout(row,wrap)
             v-flex(
-              v-bind="{ [`xs${books.flex}`]: true }",
-              v-for="book in books",
-              :key="book.title"
+              xs6,
+              v-for="image in gallery",
+              :key="image.title"
             )
               v-card.dark--text
+                v-card-media.white--text(height="200", :src="image.photoURL")
                 v-card-title(primary-title)
-                  .headline(v-text="book.title")
-                  v-divider
-                  div(v-text="book.description")
-                  small(v-text="book.author")
+                  div
+                    h3.headline(v-text="image.title")
+                    div(v-text="image.description")
                 v-divider
                 v-card-actions.dark
                   v-spacer
-                    v-btn(icon, @click="removeImage(book)").red--text
+                    v-btn(icon, @click="removeImage(image)").red--text
                       v-icon fa-trash
 </template>
 <script>
+import Firebase from 'firebase'
 import db from '../db'
 import FileUpload from '../components/FileUpload'
-let booksRef = db.ref('images')
-
+let galleryRef = db.ref('images')
+let storageRef = Firebase.storage().ref('images');
 export default {
   name: 'gallery',
   firebase: {
-    books: booksRef
+    gallery: galleryRef
   },
   components: {
     FileUpload
@@ -58,34 +58,56 @@ export default {
           title: '',
           description: '',
           uploader: '',
-          photoURL: ''
+          photoURL: '',
       },
       dialog: false,
+      file: '',
+      filename: '',
+      loading: false,
+      loader: null
     }
   },
-
   methods: {
     addImage: function () {
-      booksRef.push(this.newImage);
-      this.newImage.title = '';
-      this.newImage.author = '';
-      this.newImage.description = '';
-      this.dialog = false
+      var vm = this;
+
+      if(vm.newImage.title === '' && vm.newImage.description === '' && vm.filename === ''){
+        alert('Enter title, description and choose your image to upload.')
+        return;
+      }
+
+      vm.loading = true
+      vm.loader = 'loading3'
+      storageRef.child(vm.filename).put(vm.file).then(function(snapshot){
+        // console.log(snapshot.downloadURL)
+        vm.newImage.photoURL = snapshot.downloadURL
+        galleryRef.push(vm.newImage);
+        vm.newImage.title = ''
+        vm.newImage.description = ''
+        vm.newImage.photoURL = ''
+        vm.file = ''
+        vm.filename = ''
+        vm.dialog = false
+        vm.loading = false
+        vm.loader = null
+      });
+      // save the image first on firebase then once done / success then save the gallery data into our firebase database.
+      // we do this because we need to get the url first of the image then update the newImage data photoURL
+
+
     },
-    removeImage: function (book) {
-      let x = confirm("Do you wish to delete this book?")
+    removeImage: function (image) {
+      let x = confirm("Do you wish to delete this image?")
       if(x == true){
-        booksRef.child(book['.key']).remove()
+        galleryRef.child(image['.key']).remove()
       }
     },
-    setSrc: function(url){
-      this.newImage.photoURL = url
-      console.log('i got in')
+    setFilename: function(filename){
+      this.filename = filename
+    },
+    acceptForm: function(form){
+      this.file = form
     }
-  },
-  created() {
-    this.$on('input', this.setSrc)
-    this.$on('formData', this.setSrc)
   }
 }
 </script>

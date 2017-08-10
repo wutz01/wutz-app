@@ -8,7 +8,7 @@
 				p.white--text Have an account already?
 				v-btn.lighten-1(router, to="/login", primary, flat).white--text.text-xs-right Click here to sign in
 
-		v-flex(xs6).frm-container
+		v-flex(xs6, sm3).frm-container
 			h3.blue--text Create Account
 			div.mb-2
 				i Don't have an account yet? Create your account now.
@@ -25,7 +25,6 @@
 <script>
 	import Firebase from 'firebase'
 	import db from '../db'
-	import router from '../router'
 	let auth = Firebase.auth()
 	export default {
 		name: 'register',
@@ -72,7 +71,7 @@
 							vm.isSuccess = true;
 							vm.loader = null;
 							vm.loading = false;
-							router.push('/')
+							vm.$router.push('/')
 					}).catch(function(error) {
 				  		vm.message = error.message;
 				  		vm.hasErrors = true;

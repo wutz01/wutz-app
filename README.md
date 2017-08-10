@@ -13,7 +13,7 @@ Nexus is a chat app that has channels that you can join. This apps helps everyon
 
 ### Extra Features
 - [x] Library - It records a title, description and the author of your favorite books!
-- [ ] Gallery
+- [x] Gallery
 
 ### Tech
 

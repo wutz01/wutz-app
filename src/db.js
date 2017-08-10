@@ -7,8 +7,8 @@ let config = {
  storageBucket: "chat-room-970c7.appspot.com",
  messagingSenderId: "1080133854031"
 };
-  
+
 let app = Firebase.initializeApp(config)
-let db = app.database()
+let db = Firebase.database()
 
 export default db

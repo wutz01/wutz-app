@@ -24,7 +24,6 @@
 
 <script>
 	import Firebase from 'firebase'
-  import router from '../router'
 	let auth = Firebase.auth()
 	export default {
 		name: 'login',
@@ -62,7 +61,7 @@
 				  		vm.isSuccess = true;
               vm.loader = null;
 							vm.loading = false;
-				  		router.push('/');
+				  		vm.$router.push('/');
 					}).catch(function(error) {
 				  		vm.message = error.message;
 				  		vm.hasErrors = true;

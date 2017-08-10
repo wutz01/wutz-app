@@ -9,7 +9,7 @@
           v-list-tile-avatar
             img(:src="!logout ? user.photoURL : '' ")
           v-list-tile-content
-            v-list-tile-title {{ !logout ? user.displayName : '' }}
+            v-list-tile-title {{ !logout ? user.displayName : 'Not Logged In' }}
           v-list-tile-action
             v-btn(icon, @click.native.stop="mini = !mini")
               v-icon chevron_left
@@ -28,17 +28,17 @@
             v-icon fa-sign-out
           v-list-tile-content
             v-list-tile-title Log Out
-    v-toolbar(fixed, light).blue.white--text
+    v-toolbar(fixed, light, xs12, sm2).blue.white--text
       v-toolbar-side-icon(@click.native.stop="drawer = !drawer",v-if="!logout")
       v-toolbar-title Nexus
       v-spacer
       v-toolbar-items.hidden-sm-and-down
         v-btn(flat,@click="redirectUrl('login')",v-if="logout") Login
         v-btn(flat,@click="redirectUrl('register')",v-if="logout") Register
-    main
+    main(xs12, sm3)
       v-container
         v-layout
-          v-flex(md12)
+          v-flex(xs12)
             router-view
 </template>
 

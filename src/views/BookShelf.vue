@@ -3,7 +3,7 @@
       v-card-text
         h4.blue--text Library
         v-subheader VueJs & Firebase
-        
+
         v-layout(row, justify-center)
           v-btn(primary, @click.native="dialog = !dialog") New Book
           v-dialog(v-model="dialog", persistent, width="600px")
@@ -18,20 +18,22 @@
                 v-spacer
                 v-btn.blue--text.darken-1(flat, @click.native="dialog = false") Close
                 v-btn.darken-1(primary, @click.native="addBook") Save
-        
-        v-container(fluid, grid-list-md)
-          v-layout(row,wrap)
+
+        v-container(fluid, grid-list-md, fill-height)
+          v-layout(row,wrap, fill-height)
             v-flex(
-              v-bind="{ [`xs${books.flex}`]: true }",
+              xs6,
               v-for="book in books",
               :key="book.title"
             )
               v-card.dark--text
+                v-card-media.white--text(height="200", src="https://www.peacefuldumpling.com/wp-content/uploads/2017/05/the-power-of-now.jpg")
                 v-card-title(primary-title)
-                  .headline(v-text="book.title")
-                  v-divider
-                  div(v-text="book.description")
-                  small(v-text="book.author")
+                  div
+                    h5.headline.mb-0(v-text="book.title")
+                    br
+                    div(v-text="book.description")
+                    small(v-text="book.author")
                 v-divider
                 v-card-actions.dark
                   v-spacer
@@ -47,7 +49,7 @@ export default {
   firebase: {
     books: booksRef
   },
-  
+
   data () {
     return {
       newBook: {
@@ -58,7 +60,7 @@ export default {
       dialog: false,
     }
   },
-  
+
   methods: {
     addBook: function () {
       booksRef.push(this.newBook);

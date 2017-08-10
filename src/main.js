@@ -3,9 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import axios from 'axios'
+// import { store } from './store'
+
 import Vuetify from 'vuetify'
 import VueFire from 'vuefire'
-import axios from 'axios'
 // import { store } from './store/store'
 
 Vue.use(VueFire)
